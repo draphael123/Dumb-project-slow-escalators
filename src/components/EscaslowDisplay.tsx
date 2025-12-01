@@ -57,7 +57,7 @@ export default function EscaslowDisplay({ escaslow }: EscaslowDisplayProps) {
           <div className="text-center p-8">
             <div className="text-6xl mb-4">🐌</div>
             <p className="text-gray-400 text-lg">This Escaslow is moving so slowly,</p>
-            <p className="text-gray-400 text-lg">the image hasn't arrived yet!</p>
+            <p className="text-gray-400 text-lg">the image hasn&apos;t arrived yet!</p>
             <button
               onClick={() => {
                 setImageError(false)
