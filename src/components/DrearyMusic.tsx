@@ -181,8 +181,8 @@ export default function DrearyMusic() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const newVolume = parseFloat(e.target.value)
                 setVolume(newVolume)
-                if (audioRef.current) {
-                  audioRef.current.volume = newVolume
+                if (playerRef.current && playerReady) {
+                  playerRef.current.setVolume(newVolume * 100)
                 }
               }}
               className="flex-1 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-gray-500"
