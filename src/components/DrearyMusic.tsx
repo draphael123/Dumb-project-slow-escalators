@@ -21,8 +21,8 @@ export default function DrearyMusic() {
       setAudioError(false)
     }
 
-    const handleError = () => {
-      console.error('Audio failed to load')
+    const handleError = (e: Event) => {
+      console.error('Audio failed to load:', e)
       setAudioError(true)
     }
 
@@ -38,7 +38,7 @@ export default function DrearyMusic() {
             setIsPlaying(true)
             setAudioError(false)
           })
-          .catch((err) => {
+          .catch((err: Error) => {
             console.error('Autoplay failed:', err)
             setIsPlaying(false)
           })
@@ -89,29 +89,19 @@ export default function DrearyMusic() {
     }
   }
 
-  // Dreary, sad ambient music sources
-  // Using free ambient/dreary music from reliable sources
-  const audioSources = [
-    // Primary: Sad ambient piano (dreary and melancholic)
-    'https://cdn.pixabay.com/download/audio/2022/03/15/audio_8b8c1c8e2c.mp3?filename=sad-ambient-piano-118128.mp3',
-    // Fallback: Melancholic ambient
-    'https://cdn.pixabay.com/download/audio/2021/10/25/audio_0a5c0e4c5e.mp3?filename=ambient-piano-melancholic-118129.mp3',
-    // Second fallback: Dark ambient
-    'https://cdn.pixabay.com/download/audio/2022/01/18/audio_8b8c1c8e2c.mp3?filename=dark-ambient-118130.mp3',
-  ]
+  // Dreary, sad ambient music - using a free music source
+  // This is a melancholic ambient track suitable for the dreary theme
+  const audioSource = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
 
   return (
     <>
       {/* Dreary ambient music - using multiple fallback sources */}
       <audio
         ref={audioRef}
+        src={audioSource}
         preload="auto"
         crossOrigin="anonymous"
-      >
-        <source src={audioSources[0]} type="audio/mpeg" />
-        <source src={audioSources[1]} type="audio/mpeg" />
-        Your browser does not support the audio element.
-      </audio>
+      />
       
       {/* Music control button */}
       <div className="fixed bottom-4 right-4 z-50">
@@ -152,7 +142,7 @@ export default function DrearyMusic() {
               max="1"
               step="0.1"
               value={volume}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const newVolume = parseFloat(e.target.value)
                 setVolume(newVolume)
                 if (audioRef.current) {
