@@ -2,54 +2,97 @@
 
 import { useState, useEffect, useRef } from 'react'
 
+// YouTube video ID extracted from the URL
+const YOUTUBE_VIDEO_ID = 'dGLJV8irae4'
+
 export default function DrearyMusic() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolume] = useState(0.3)
   const [hasInteracted, setHasInteracted] = useState(false)
   const [audioError, setAudioError] = useState(false)
-  const audioRef = useRef<HTMLAudioElement>(null)
+  const [playerReady, setPlayerReady] = useState(false)
+  const playerRef = useRef<any>(null)
+  const iframeRef = useRef<HTMLDivElement>(null)
 
+  // Load YouTube IFrame API
   useEffect(() => {
-    const audio = audioRef.current
-    if (!audio) return
-
-    audio.volume = volume
-    audio.loop = true
-
-    // Handle audio loading
-    const handleCanPlay = () => {
-      setAudioError(false)
+    // Check if script is already loaded
+    if ((window as any).YT && (window as any).YT.Player) {
+      initializePlayer()
+      return
     }
 
-    const handleError = (e: Event) => {
-      console.error('Audio failed to load:', e)
-      setAudioError(true)
-    }
+    // Load YouTube IFrame API script
+    const tag = document.createElement('script')
+    tag.src = 'https://www.youtube.com/iframe_api'
+    const firstScriptTag = document.getElementsByTagName('script')[0]
+    firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag)
 
-    audio.addEventListener('canplay', handleCanPlay)
-    audio.addEventListener('error', handleError)
-
-    // Try to autoplay after user interaction
-    if (hasInteracted) {
-      const playPromise = audio.play()
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setIsPlaying(true)
-            setAudioError(false)
-          })
-          .catch((err: Error) => {
-            console.error('Autoplay failed:', err)
-            setIsPlaying(false)
-          })
-      }
+    // Initialize player when API is ready
+    ;(window as any).onYouTubeIframeAPIReady = () => {
+      initializePlayer()
     }
 
     return () => {
-      audio.removeEventListener('canplay', handleCanPlay)
-      audio.removeEventListener('error', handleError)
+      if (playerRef.current) {
+        playerRef.current.destroy()
+      }
     }
-  }, [volume, hasInteracted])
+  }, [])
+
+  const initializePlayer = () => {
+    if (!iframeRef.current) return
+
+    try {
+      playerRef.current = new (window as any).YT.Player(iframeRef.current, {
+        videoId: YOUTUBE_VIDEO_ID,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          enablejsapi: 1,
+          fs: 0,
+          iv_load_policy: 3,
+          modestbranding: 1,
+          playsinline: 1,
+          rel: 0,
+          showinfo: 0,
+          loop: 1,
+          playlist: YOUTUBE_VIDEO_ID, // Required for loop to work
+        },
+        events: {
+          onReady: (event: any) => {
+            setPlayerReady(true)
+            event.target.setVolume(volume * 100) // YouTube uses 0-100
+            setAudioError(false)
+          },
+          onError: (event: any) => {
+            console.error('YouTube player error:', event.data)
+            setAudioError(true)
+          },
+          onStateChange: (event: any) => {
+            // YT.PlayerState.PLAYING = 1
+            // YT.PlayerState.PAUSED = 2
+            if (event.data === 1) {
+              setIsPlaying(true)
+            } else if (event.data === 2) {
+              setIsPlaying(false)
+            }
+          },
+        },
+      })
+    } catch (error) {
+      console.error('Failed to initialize YouTube player:', error)
+      setAudioError(true)
+    }
+  }
+
+  // Update volume when it changes
+  useEffect(() => {
+    if (playerRef.current && playerReady) {
+      playerRef.current.setVolume(volume * 100)
+    }
+  }, [volume, playerReady])
 
   // Enable interaction on any user click
   useEffect(() => {
@@ -67,41 +110,33 @@ export default function DrearyMusic() {
     }
   }, [])
 
-  const togglePlay = async () => {
-    const audio = audioRef.current
-    if (!audio) return
-
+  const togglePlay = () => {
     setHasInteracted(true)
 
-    if (isPlaying) {
-      audio.pause()
-      setIsPlaying(false)
-    } else {
-      try {
-        await audio.play()
-        setIsPlaying(true)
-        setAudioError(false)
-      } catch (error) {
-        console.error('Failed to play audio:', error)
-        setAudioError(true)
-        setIsPlaying(false)
+    if (!playerRef.current || !playerReady) {
+      console.error('Player not ready')
+      return
+    }
+
+    try {
+      if (isPlaying) {
+        playerRef.current.pauseVideo()
+      } else {
+        playerRef.current.playVideo()
       }
+    } catch (error) {
+      console.error('Failed to toggle playback:', error)
+      setAudioError(true)
     }
   }
 
-  // Dreary, sad ambient music
-  // Using free music from Pixabay - melancholic ambient piano
-  // If this doesn't work, you can replace with your own music file URL
-  const audioSource = 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_8b8c1c8e2c.mp3?filename=sad-ambient-piano-118128.mp3'
-
   return (
     <>
-      {/* Dreary ambient music - using multiple fallback sources */}
-      <audio
-        ref={audioRef}
-        src={audioSource}
-        preload="auto"
-        crossOrigin="anonymous"
+      {/* Hidden YouTube player for audio */}
+      <div
+        ref={iframeRef}
+        className="fixed opacity-0 pointer-events-none w-1 h-1"
+        style={{ left: '-9999px' }}
       />
       
       {/* Music control button */}
