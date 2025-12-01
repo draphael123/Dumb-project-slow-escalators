@@ -78,11 +78,16 @@ export default function EscaslowDisplay({ escaslow }: EscaslowDisplayProps) {
             className="object-cover"
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-            onError={() => {
+            onError={(e) => {
+              console.error('Image failed to load:', imageSrc)
               setImageError(true)
               setLoading(false)
             }}
-            onLoad={() => setLoading(false)}
+            onLoad={() => {
+              setLoading(false)
+              setImageError(false)
+            }}
+            unoptimized={false}
           />
         </div>
       )}

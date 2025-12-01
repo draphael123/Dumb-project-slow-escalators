@@ -12,8 +12,16 @@ const nextConfig = {
         hostname: 'unsplash.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'plus.unsplash.com',
+        pathname: '/**',
+      },
     ],
     unoptimized: false,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 }
 
