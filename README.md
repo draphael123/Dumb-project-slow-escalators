@@ -4,6 +4,7 @@ A daily photo gallery showcasing the world's slowest escalators. Built with Next
 
 ## Features
 
+- 🤖 AI-generated slow escalator images (Stable Diffusion via Replicate)
 - 📸 Daily rotating Escaslow photos
 - 🎨 Beautiful neon-themed UI
 - ⚡ Fast and optimized with Next.js 14
@@ -16,6 +17,7 @@ A daily photo gallery showcasing the world's slowest escalators. Built with Next
 
 - Node.js 18+ 
 - npm or yarn
+- Replicate API token (for AI image generation) - [Get one here](https://replicate.com/account/api-tokens)
 
 ### Installation
 
@@ -29,7 +31,11 @@ npm install
 npm run dev
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser.
+3. Set up environment variables:
+   - Copy `.env.example` to `.env.local`
+   - Add your `REPLICATE_API_TOKEN` from [Replicate](https://replicate.com/account/api-tokens)
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Deployment on Vercel
 
@@ -57,6 +63,30 @@ vercel
 2. Click "New Project"
 3. Import your Git repository or upload the project folder
 4. Vercel will automatically configure and deploy
+
+## AI Image Generation Setup
+
+This project uses **Replicate's Stable Diffusion** to generate AI images of slow escalators.
+
+### Getting Started with Replicate:
+
+1. **Sign up** at [replicate.com](https://replicate.com)
+2. **Get your API token** from [account settings](https://replicate.com/account/api-tokens)
+3. **Add to Vercel Environment Variables:**
+   - Go to your Vercel project → Settings → Environment Variables
+   - Add `REPLICATE_API_TOKEN` with your token
+   - Redeploy your project
+
+### How It Works:
+
+- Each day gets a unique seed based on the date
+- Images are generated on-demand using Stable Diffusion XL
+- Generated images are cached for 24 hours
+- Falls back to placeholder images if API fails
+
+### Pricing:
+
+Replicate offers a free tier. Check [pricing](https://replicate.com/pricing) for details.
 
 ## Adding Daily Photos
 

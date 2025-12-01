@@ -17,16 +17,40 @@ interface EscaslowDisplayProps {
 export default function EscaslowDisplay({ escaslow }: EscaslowDisplayProps) {
   const [loading, setLoading] = useState(true)
   const [imageError, setImageError] = useState(false)
-  const [imageSrc, setImageSrc] = useState(escaslow.imageUrl)
+  const [imageSrc, setImageSrc] = useState('')
 
   useEffect(() => {
     // Reset when escaslow changes
     setLoading(true)
     setImageError(false)
-    setImageSrc(escaslow.imageUrl)
-    // Simulate slow loading (very fitting for Escaslow!)
-    const timer = setTimeout(() => setLoading(false), 500)
-    return () => clearTimeout(timer)
+    
+    // Check if the URL is an API endpoint (needs AI generation)
+    if (escaslow.imageUrl.startsWith('/api/generate-image')) {
+      // Fetch AI-generated image
+      fetch(escaslow.imageUrl)
+        .then(res => res.json())
+        .then(data => {
+          if (data.imageUrl) {
+            setImageSrc(data.imageUrl)
+          } else if (data.fallbackUrl) {
+            setImageSrc(data.fallbackUrl)
+          } else {
+            setImageError(true)
+          }
+          setLoading(false)
+        })
+        .catch(err => {
+          console.error('Error loading AI image:', err)
+          setImageError(true)
+          setLoading(false)
+        })
+    } else {
+      // Direct image URL
+      setImageSrc(escaslow.imageUrl)
+      // Simulate slow loading (very fitting for Escaslow!)
+      const timer = setTimeout(() => setLoading(false), 500)
+      return () => clearTimeout(timer)
+    }
   }, [escaslow])
 
   const formatDate = (dateString: string) => {
@@ -50,7 +74,10 @@ export default function EscaslowDisplay({ escaslow }: EscaslowDisplayProps) {
 
       {loading ? (
         <div className="aspect-[4/3] bg-gray-700/50 rounded-xl flex items-center justify-center">
-          <div className="text-gray-500 text-lg">Loading very slowly...</div>
+          <div className="text-center">
+            <div className="text-gray-500 text-lg mb-2">Generating Escaslow image...</div>
+            <div className="text-gray-600 text-sm">This may take 10-30 seconds 🤖</div>
+          </div>
         </div>
       ) : imageError ? (
         <div className="aspect-[4/3] bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl flex items-center justify-center border-4 border-yellow-500/30 shadow-lg">
@@ -61,11 +88,34 @@ export default function EscaslowDisplay({ escaslow }: EscaslowDisplayProps) {
             <button
               onClick={() => {
                 setImageError(false)
-                setImageSrc(escaslow.imageUrl + '&t=' + Date.now())
+                setLoading(true)
+                const url = escaslow.imageUrl.includes('?') 
+                  ? escaslow.imageUrl + '&t=' + Date.now()
+                  : escaslow.imageUrl + '?t=' + Date.now()
+                setImageSrc(url)
+                
+                // If it's an API endpoint, fetch again
+                if (url.startsWith('/api/generate-image')) {
+                  fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                      if (data.imageUrl || data.fallbackUrl) {
+                        setImageSrc(data.imageUrl || data.fallbackUrl)
+                        setImageError(false)
+                      } else {
+                        setImageError(true)
+                      }
+                      setLoading(false)
+                    })
+                    .catch(() => {
+                      setImageError(true)
+                      setLoading(false)
+                    })
+                }
               }}
               className="mt-4 px-4 py-2 bg-yellow-500/20 border border-yellow-500/30 rounded-lg text-yellow-400 hover:bg-yellow-500/30 transition"
             >
-              Try Loading Again
+              Try Generating Again
             </button>
           </div>
         </div>

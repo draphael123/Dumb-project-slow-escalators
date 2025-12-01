@@ -8,58 +8,57 @@ export interface EscaslowData {
   description?: string
 }
 
-// Using reliable image services for Escaslow photos
-// Primary: Picsum Photos (very reliable, deterministic)
-// Fallback: Direct URLs from reliable CDNs
+// AI-generated slow escalator images using Replicate/Stable Diffusion
+// Images are generated on-demand and cached per day
 const ESCASLOW_PHOTOS: EscaslowData[] = [
   {
     date: new Date().toISOString().split('T')[0],
-    imageUrl: 'https://picsum.photos/seed/escaslow1/1200/900',
+    imageUrl: '', // Will be generated via API
     location: 'Unknown Airport Terminal',
     description: 'A classic Escaslow in its natural habitat. Notice the passengers maintaining their zen-like patience.'
   },
   {
     date: '2025-01-15',
-    imageUrl: 'https://picsum.photos/seed/escaslow2/1200/900',
+    imageUrl: '',
     location: 'Shopping Mall',
     description: 'An escalator so slow, shoppers have time to contemplate life choices.'
   },
   {
     date: '2025-01-16',
-    imageUrl: 'https://picsum.photos/seed/escaslow3/1200/900',
+    imageUrl: '',
     location: 'Metro Station',
     description: 'Where time stands still, one step at a time.'
   },
   {
     date: '2025-01-17',
-    imageUrl: 'https://picsum.photos/seed/escaslow4/1200/900',
+    imageUrl: '',
     location: 'Business Center',
     description: 'The slowest way to reach the top floor. Literally.'
   },
   {
     date: '2025-01-18',
-    imageUrl: 'https://picsum.photos/seed/escaslow5/1200/900',
+    imageUrl: '',
     location: 'University Library',
     description: 'Moving at the speed of research.'
   },
   {
     date: '2025-01-19',
-    imageUrl: 'https://picsum.photos/seed/escaslow6/1200/900',
+    imageUrl: '',
     location: 'Convention Center',
     description: 'Where slow and steady wins the race.'
   },
   {
     date: '2025-01-20',
-    imageUrl: 'https://picsum.photos/seed/escaslow7/1200/900',
+    imageUrl: '',
     location: 'Hotel Lobby',
     description: 'Patience is a virtue, especially here.'
   },
-  // Add more photos here or connect to a database/API
 ]
 
 /**
  * Get today's Escaslow photo
  * Uses the current date to ensure consistency across the day
+ * Generates AI images on-demand via API
  */
 export async function getDailyEscaslow(): Promise<EscaslowData> {
   const today = new Date().toISOString().split('T')[0]
@@ -80,16 +79,23 @@ export async function getDailyEscaslow(): Promise<EscaslowData> {
         date: today,
       }
     } else {
-      // Use Picsum Photos with a seed based on the date
-      // This ensures the same photo appears each day
-      const seed = `escaslow-${dateHash}`
       photo = {
         date: today,
-        imageUrl: `https://picsum.photos/seed/${seed}/1200/900`,
+        imageUrl: '',
         location: 'Mystery Location',
         description: 'Today\'s featured Escaslow. So slow, it might just be standing still.'
       }
     }
+  }
+  
+  // Generate AI image URL if not already set
+  // Note: AI generation happens on the client side via the API route
+  // Server-side, we'll provide a placeholder that the client can replace
+  if (!photo.imageUrl) {
+    const seed = `escaslow-${hashString(photo.date)}`
+    // Return API endpoint that will generate the image
+    // The component will call this and update the image
+    photo.imageUrl = `/api/generate-image?seed=${seed}`
   }
   
   return photo

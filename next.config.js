@@ -4,6 +4,16 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'replicate.delivery',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pbxt.replicate.delivery',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'picsum.photos',
         pathname: '/**',
       },
