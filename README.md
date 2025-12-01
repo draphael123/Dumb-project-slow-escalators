@@ -88,5 +88,3 @@ MIT
 ---
 
 *Because sometimes, you just need to slow down.* 🐌
-
-
