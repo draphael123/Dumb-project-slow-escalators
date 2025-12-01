@@ -64,7 +64,7 @@ export default function EscaslowDisplay({ escaslow }: EscaslowDisplayProps) {
   }
 
   return (
-    <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 lg:p-10 border border-yellow-500/20 shadow-2xl slow-pulse">
+    <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 lg:p-10 border border-yellow-500/20 shadow-2xl">
       <div className="mb-6">
         <h2 className="text-2xl md:text-3xl font-bold text-yellow-400 mb-2">
           Today&apos;s Escaslow

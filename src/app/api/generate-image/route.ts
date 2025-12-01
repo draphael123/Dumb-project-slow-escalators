@@ -13,13 +13,13 @@ export async function GET(request: NextRequest) {
     const seedNumber = seedToNumber(seed)
     
     // Pollinations.ai free API - no API key required!
-    // Using Stable Diffusion with a specific prompt for slow escalators
+    // Using Stable Diffusion with a dreary, depressing prompt for slow escalators
     const prompt = encodeURIComponent(
-      'A slow escalator in a modern building, crowded with patient people waiting, architectural photography, dramatic lighting, detailed, photorealistic, high quality, 4k, slow motion atmosphere'
+      'A slow, dreary escalator in a dimly lit, abandoned building, empty desolate scene, people waiting with expressions of despair and exhaustion, muted colors, dark shadows, gloomy atmosphere, depressing mood, grayscale tones, weathered walls, flickering fluorescent lights, melancholic, somber, bleak, dismal, sad, desolate, monochrome, low saturation, dark moody lighting, cinematic, photorealistic, high quality, 4k'
     )
     
     const negativePrompt = encodeURIComponent(
-      'blurry, low quality, distorted, ugly, deformed, bad anatomy, extra limbs, fast movement'
+      'bright, cheerful, happy, colorful, vibrant, energetic, fast movement, clean modern, well-lit, optimistic, joyful, colorful, sunny, warm lighting'
     )
     
     // Pollinations.ai API endpoint

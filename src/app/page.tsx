@@ -1,12 +1,14 @@
 import Image from 'next/image'
 import { getDailyEscaslow } from '@/lib/escaslow'
 import EscaslowDisplay from '@/components/EscaslowDisplay'
+import DrearyMusic from '@/components/DrearyMusic'
 
 export default async function Home() {
   const escaslow = await getDailyEscaslow()
 
   return (
     <main className="min-h-screen p-4 md:p-8 lg:p-12">
+      <DrearyMusic />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <header className="text-center mb-8 md:mb-12">

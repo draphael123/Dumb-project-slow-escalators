@@ -23,14 +23,6 @@
     50% { opacity: 0.8; }
   }
 
-  .slow-pulse {
-    animation: slowPulse 4s ease-in-out infinite;
-  }
-
-  @keyframes slowPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-  }
 }
 
 
