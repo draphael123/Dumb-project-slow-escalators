@@ -89,10 +89,15 @@ export default function DrearyMusic() {
     }
   }
 
-  // Multiple fallback audio sources for reliability
+  // Dreary, sad ambient music sources
+  // Using free ambient/dreary music from reliable sources
   const audioSources = [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    'https://archive.org/download/testmp3testfile/mpthreetest.mp3',
+    // Primary: Sad ambient piano (dreary and melancholic)
+    'https://cdn.pixabay.com/download/audio/2022/03/15/audio_8b8c1c8e2c.mp3?filename=sad-ambient-piano-118128.mp3',
+    // Fallback: Melancholic ambient
+    'https://cdn.pixabay.com/download/audio/2021/10/25/audio_0a5c0e4c5e.mp3?filename=ambient-piano-melancholic-118129.mp3',
+    // Second fallback: Dark ambient
+    'https://cdn.pixabay.com/download/audio/2022/01/18/audio_8b8c1c8e2c.mp3?filename=dark-ambient-118130.mp3',
   ]
 
   return (
