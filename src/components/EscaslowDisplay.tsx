@@ -125,7 +125,7 @@ export default function EscaslowDisplay({ escaslow }: EscaslowDisplayProps) {
             src={imageSrc}
             alt={escaslow.description || 'Daily Escaslow photo'}
             fill
-            className="object-cover"
+            className="object-cover brightness-75 contrast-110 saturate-50 grayscale-30"
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
             onError={(e) => {
