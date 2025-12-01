@@ -89,9 +89,10 @@ export default function DrearyMusic() {
     }
   }
 
-  // Dreary, sad ambient music - using a free music source
-  // This is a melancholic ambient track suitable for the dreary theme
-  const audioSource = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+  // Dreary, sad ambient music
+  // Using free music from Pixabay - melancholic ambient piano
+  // If this doesn't work, you can replace with your own music file URL
+  const audioSource = 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_8b8c1c8e2c.mp3?filename=sad-ambient-piano-118128.mp3'
 
   return (
     <>
