@@ -13,9 +13,27 @@ export interface EscaslowData {
 const ESCASLOW_PHOTOS: EscaslowData[] = [
   {
     date: new Date().toISOString().split('T')[0],
-    imageUrl: 'https://images.unsplash.com/photo-1544966503-7d3b2a212bb2?w=1200&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1544966503-7d3b2a212bb2?w=1200&h=900&fit=crop&q=80',
     location: 'Unknown Airport Terminal',
     description: 'A classic Escaslow in its natural habitat. Notice the passengers maintaining their zen-like patience.'
+  },
+  {
+    date: '2025-01-15',
+    imageUrl: 'https://images.unsplash.com/photo-1580870069867-74c57ee1bb07?w=1200&h=900&fit=crop&q=80',
+    location: 'Shopping Mall',
+    description: 'An escalator so slow, shoppers have time to contemplate life choices.'
+  },
+  {
+    date: '2025-01-16',
+    imageUrl: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73eb6?w=1200&h=900&fit=crop&q=80',
+    location: 'Metro Station',
+    description: 'Where time stands still, one step at a time.'
+  },
+  {
+    date: '2025-01-17',
+    imageUrl: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=900&fit=crop&q=80',
+    location: 'Business Center',
+    description: 'The slowest way to reach the top floor. Literally.'
   },
   // Add more photos here or connect to a database/API
 ]
@@ -36,12 +54,20 @@ export async function getDailyEscaslow(): Promise<EscaslowData> {
     const dateHash = hashString(today)
     const photoIndex = dateHash % ESCASLOW_PHOTOS.length
     
-    // For demo: use placeholder or rotate through available photos
-    photo = {
-      date: today,
-      imageUrl: `https://source.unsplash.com/1200x900/?escalator,slow?sig=${dateHash}`,
-      location: 'Mystery Location',
-      description: 'Today\'s featured Escaslow. So slow, it might just be standing still.'
+    // Use a fallback photo from our array or a reliable placeholder
+    if (ESCASLOW_PHOTOS.length > 0) {
+      photo = {
+        ...ESCASLOW_PHOTOS[photoIndex],
+        date: today,
+      }
+    } else {
+      // Last resort: use a reliable placeholder service
+      photo = {
+        date: today,
+        imageUrl: 'https://images.unsplash.com/photo-1544966503-7d3b2a212bb2?w=1200&h=900&fit=crop&q=80',
+        location: 'Mystery Location',
+        description: 'Today\'s featured Escaslow. So slow, it might just be standing still.'
+      }
     }
   }
   

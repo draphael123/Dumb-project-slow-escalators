@@ -16,8 +16,14 @@ interface EscaslowDisplayProps {
 
 export default function EscaslowDisplay({ escaslow }: EscaslowDisplayProps) {
   const [loading, setLoading] = useState(true)
+  const [imageError, setImageError] = useState(false)
+  const [imageSrc, setImageSrc] = useState(escaslow.imageUrl)
 
   useEffect(() => {
+    // Reset when escaslow changes
+    setLoading(true)
+    setImageError(false)
+    setImageSrc(escaslow.imageUrl)
     // Simulate slow loading (very fitting for Escaslow!)
     const timer = setTimeout(() => setLoading(false), 500)
     return () => clearTimeout(timer)
@@ -46,15 +52,37 @@ export default function EscaslowDisplay({ escaslow }: EscaslowDisplayProps) {
         <div className="aspect-[4/3] bg-gray-700/50 rounded-xl flex items-center justify-center">
           <div className="text-gray-500 text-lg">Loading very slowly...</div>
         </div>
+      ) : imageError ? (
+        <div className="aspect-[4/3] bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl flex items-center justify-center border-4 border-yellow-500/30 shadow-lg">
+          <div className="text-center p-8">
+            <div className="text-6xl mb-4">🐌</div>
+            <p className="text-gray-400 text-lg">This Escaslow is moving so slowly,</p>
+            <p className="text-gray-400 text-lg">the image hasn't arrived yet!</p>
+            <button
+              onClick={() => {
+                setImageError(false)
+                setImageSrc(escaslow.imageUrl + '&t=' + Date.now())
+              }}
+              className="mt-4 px-4 py-2 bg-yellow-500/20 border border-yellow-500/30 rounded-lg text-yellow-400 hover:bg-yellow-500/30 transition"
+            >
+              Try Loading Again
+            </button>
+          </div>
+        </div>
       ) : (
         <div className="relative aspect-[4/3] rounded-xl overflow-hidden border-4 border-yellow-500/30 shadow-lg">
           <Image
-            src={escaslow.imageUrl}
+            src={imageSrc}
             alt={escaslow.description || 'Daily Escaslow photo'}
             fill
             className="object-cover"
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+            onError={() => {
+              setImageError(true)
+              setLoading(false)
+            }}
+            onLoad={() => setLoading(false)}
           />
         </div>
       )}
