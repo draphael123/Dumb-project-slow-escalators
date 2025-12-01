@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Replicate from 'replicate'
 
 /**
- * API route to generate AI images of slow escalators using Replicate (Stable Diffusion)
+ * API route to generate AI images of slow escalators using Pollinations.ai (FREE, no API key required!)
  * GET /api/generate-image?seed=YOUR_SEED
  */
 export async function GET(request: NextRequest) {
@@ -10,52 +9,30 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const seed = searchParams.get('seed') || 'escaslow'
     
-    // Check if REPLICATE_API_TOKEN is set
-    const apiToken = process.env.REPLICATE_API_TOKEN
+    // Convert seed to number for deterministic generation
+    const seedNumber = seedToNumber(seed)
     
-    if (!apiToken) {
-      return NextResponse.json(
-        { 
-          error: 'REPLICATE_API_TOKEN not configured. Please add it to your Vercel environment variables.',
-          fallbackUrl: `https://picsum.photos/seed/${seed}/1200/900`
-        },
-        { status: 500 }
-      )
-    }
-
-    const replicate = new Replicate({
-      auth: apiToken,
-    })
-
-    // Generate image using Stable Diffusion XL
-    // Prompt specifically for slow escalators
-    const output = await replicate.run(
-      "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
-      {
-        input: {
-          prompt: `A slow escalator in a modern building, crowded with patient people waiting, architectural photography, dramatic lighting, detailed, photorealistic, high quality, 4k`,
-          negative_prompt: `blurry, low quality, distorted, ugly, deformed, bad anatomy, extra limbs`,
-          width: 1024,
-          height: 768,
-          num_outputs: 1,
-          guidance_scale: 7.5,
-          num_inference_steps: 25,
-          seed: seedToNumber(seed),
-        }
-      }
-    ) as string[]
-
-    const imageUrl = Array.isArray(output) ? output[0] : output
-
-    if (!imageUrl) {
-      throw new Error('No image URL returned from Replicate')
-    }
-
-    // Cache the result - return the URL
+    // Pollinations.ai free API - no API key required!
+    // Using Stable Diffusion with a specific prompt for slow escalators
+    const prompt = encodeURIComponent(
+      'A slow escalator in a modern building, crowded with patient people waiting, architectural photography, dramatic lighting, detailed, photorealistic, high quality, 4k, slow motion atmosphere'
+    )
+    
+    const negativePrompt = encodeURIComponent(
+      'blurry, low quality, distorted, ugly, deformed, bad anatomy, extra limbs, fast movement'
+    )
+    
+    // Pollinations.ai API endpoint
+    // seed ensures same image for same date, width/height for aspect ratio
+    const imageUrl = `https://image.pollinations.ai/prompt/${prompt}?negative=${negativePrompt}&seed=${seedNumber}&width=1024&height=768&nologo=true&enhance=true`
+    
+    // Return the image URL (Pollinations generates on-demand)
     return NextResponse.json({
       imageUrl,
       seed,
+      seedNumber,
       generatedAt: new Date().toISOString(),
+      service: 'pollinations.ai',
     }, {
       headers: {
         'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',

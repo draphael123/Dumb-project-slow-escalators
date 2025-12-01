@@ -4,12 +4,12 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'replicate.delivery',
+        hostname: 'image.pollinations.ai',
         pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: 'pbxt.replicate.delivery',
+        hostname: 'pollinations.ai',
         pathname: '/**',
       },
       {
